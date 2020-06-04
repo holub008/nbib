@@ -20,7 +20,7 @@ class Category(Enum):
             tag content of this category may simply be placed in a list
         """
         return self in [Category.GRANT, Category.PUBLICATION_TYPE, Category.KEYWORD, Category.AFFILIATION,
-                        Category.AUTHOR_LIST]
+                        Category.AUTHOR_LIST, Category.DESCRIPTOR]
 
     def attribute_appendable(self) -> bool:
         """

@@ -155,7 +155,7 @@ def get_tag_parsers():
         'LA': TagParser(Category.STUDY, 'language'),
         # skipping LID (location id) as a duplicate of AID
         'LR': DateTimeParser(Category.STUDY, 'last_revision_date'),
-        'MH': TagParser(Category.STUDY, 'mesh'),  # a post-processing step will add structure to these
+        'MH': TagParser(Category.DESCRIPTOR, 'mesh_heading'),
         # skipping MHDA (mesh date) as duplicate of [medline] PHST
         # skipping OAB (other abstract) as irrelevant
         # skipping OABL (other abstract language) as irrelevant

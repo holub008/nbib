@@ -50,18 +50,20 @@ def _parse_and_place_tag(current_tag: str, current_tag_content: list, current_re
                 # appendable) and we've reached a new start tag. create a new entry
                 if ix == len(navigation) - 1:
                     if cat.attribute_appendable() and cat.get_start_tag() == current_tag:
-                        ref_write_location.push({})
+                        ref_write_location.append({})
 
                 # to navigate the list, we simply pick the last (most recent) element
                 ref_write_location = ref_write_location[-1]
             # to navigate the dict, we pick out the correct key (attribute)
             elif parent_category.attribute_appendable():
-                cat_attribute = cat.get_attribute()
+                cat_attribute = cat.get_attribute_name()
                 if cat_attribute not in ref_write_location:
                     if cat.list_appendable():
                         ref_write_location[cat_attribute] = []
                     elif cat.attribute_appendable():
                         ref_write_location[cat_attribute] = {}
+                    else:
+                        raise ValueError('Categories must be either list or attribute appendable!')
 
                 ref_write_location = ref_write_location[cat_attribute]
             else:
@@ -72,7 +74,7 @@ def _parse_and_place_tag(current_tag: str, current_tag_content: list, current_re
     # perform the write
     ##############
     if category.list_appendable():
-        ref_write_location.push(parsed_content)
+        ref_write_location.append(parsed_content)
     elif category.attribute_appendable():
         ref_write_location[attribute_name] = parsed_content
     else:
@@ -88,7 +90,7 @@ def _parse_line(line) -> tuple:
     if match:
         groups = match.groups()
         if groups[1] == '-':
-            return groups[0], groups[2]
+            return groups[0].rstrip(), groups[2]
         else:
             return None, groups[2]
 
@@ -112,8 +114,10 @@ def _first_pass_parse(content: str, tag_parsers: dict) -> list:
     for line in lines:
         if line == '':  # end of record
             _parse_and_place_tag(current_tag, current_tag_content, current_ref, tag_parsers)
-            refs.append(current_ref)
-            current_ref = {}
+            # filter end of file (which technically starts a new entry with two newlines) and otherwise empty refs
+            if not current_ref == {}:
+                refs.append(current_ref)
+                current_ref = {}
             current_tag_content = []
             current_tag = None
         else:
