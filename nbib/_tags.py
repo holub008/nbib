@@ -1,81 +1,12 @@
 import dateutil.parser as dup
 
-from nbib._exceptions import UnknownTagFormat
+from nbib.exceptions import UnknownTagFormat
+from nbib._structure import Category
 
-from enum import Enum, auto
 import re
 
 NESTED_BRACKET_FORMAT = r'^(.*) \[([a-zA-Z]+)\]$'
 ISSN_FORMAT = r'^([0-9]{4}\-[0-9]+) \(([a-zA-Z]+)\)$'
-
-
-class Category(Enum):
-    STUDY = auto()
-    AUTHOR_LIST = auto()
-    AUTHOR = auto()
-    AFFILIATION = auto()
-    DESCRIPTOR = auto()
-    KEYWORD = auto()
-    PUBLICATION_TYPE = auto()
-    GRANT = auto()
-
-    # corresponds to a DFS of the goal structure
-    _category_to_attribute_path = {
-        STUDY: tuple(),
-        AUTHOR_LIST: (STUDY, ),
-        AUTHOR: (STUDY, AUTHOR_LIST),
-        AFFILIATION: (STUDY, AUTHOR_LIST, AUTHOR),
-        DESCRIPTOR: (STUDY, ),
-        KEYWORD: (STUDY, ),
-        PUBLICATION_TYPE: (STUDY, ),
-        GRANT: (STUDY, )
-    }
-
-    _category_to_attribute_name = {
-        STUDY: None,
-        AUTHOR_LIST: 'authors',
-        AUTHOR: None,
-        AFFILIATION: 'affiliations',
-        DESCRIPTOR: 'descriptors',
-        KEYWORD: 'keywords',
-        PUBLICATION_TYPE: 'publication_types',
-        GRANT: 'grants',
-    }
-
-    def list_appendable(self) -> bool:
-        """
-            tag content of this category may simply be placed in a list
-        """
-        return self in [Category.GRANT, Category.PUBLICATION_TYPE, Category.KEYWORD, Category.AFFILIATION,
-                        Category.AUTHOR_LIST]
-
-    def attribute_appendable(self) -> bool:
-        """
-            tag content of this category
-        """
-        return self in [Category.STUDY, Category.AUTHOR]
-
-    def get_start_tag(self) -> str:
-        """
-            for tags that occur in sequence (i.e. list & attribute appendable), get the tag that marks the start of a
-            new entity. will throw for Enums that aren't both list & attribute appendable
-        """
-        if self == Category.AUTHOR:
-            return 'FAU'
-
-        raise ValueError('Only attribute appendable categories rooted beneath a list appendable have a start tag')
-
-    def get_attribute_path(self) -> list:
-        """
-            defines how to navigate to the location to append the next tag of the category
-        """
-        return self._category_to_attribute_path[self]
-
-    def get_attribute_name(self) -> str:
-        """
-            get the attribute name defining this category
-        """
-        return self._category_to_attribute_name[self]
 
 
 class TagParser:
@@ -156,7 +87,7 @@ class ISSNParser(TagParser):
 
 class PubMedHistoryParser(TagParser):
     def __init__(self):
-        super().__init__(Category.HISTORY, 'unspecified_event')
+        super().__init__(Category.STUDY, 'unspecified_event')
 
     def parse(self, lines):
         match = re.match(NESTED_BRACKET_FORMAT, lines[0])
@@ -186,7 +117,7 @@ def get_tag_parsers():
         'CI': TagParser(Category.STUDY, 'copyright'),
         # skipping CIN (comment in) since it's information rich + somewhat ambiguous
         'CN': TagParser(Category.STUDY, 'corporate_author'),
-        'COIS': TagParser(Category.STUDY, 'conflict_of_interest'), # note: the documentation incorrectly calls this 'COI'
+        'COIS': TagParser(Category.STUDY, 'conflict_of_interest'),  # note: documentation incorrectly calls this 'COI'
         # skipping CON (comment on)
         # skipping CP (book chapter) as irrelevant
         # skipping CRDT (creation date), since at best is confused with other information
@@ -224,7 +155,7 @@ def get_tag_parsers():
         'LA': TagParser(Category.STUDY, 'language'),
         # skipping LID (location id) as a duplicate of AID
         'LR': DateTimeParser(Category.STUDY, 'last_revision_date'),
-        'MH': TagParser(Category.STUDY, 'mesh'), # a post-processing step will add structure to these
+        'MH': TagParser(Category.STUDY, 'mesh'),  # a post-processing step will add structure to these
         # skipping MHDA (mesh date) as duplicate of [medline] PHST
         # skipping OAB (other abstract) as irrelevant
         # skipping OABL (other abstract language) as irrelevant

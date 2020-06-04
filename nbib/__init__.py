@@ -1,22 +1,31 @@
 import re
-from nbib._exceptions import MalformedLine, MalformedSequentialData
 
-LINE_REGEX = r'^([ A-Z]{4})(-| ) (.*)$'
+from nbib.exceptions import MalformedLine, MalformedSequentialData
+from nbib._tags import get_tag_parsers
 
-def load_file(path):
+_LINE_REGEX = r'^([ A-Z]{4})(-| ) (.*)$'
+
+
+def read_file(path):
     pass
 
 
-def load(content):
-    pass
+def read(content):
+    tag_parsers = get_tag_parsers()
+    fp_obj = _first_pass_parse(content, tag_parsers)
+
+    return fp_obj
 
 
-def _parse_and_place_tag(current_tag: str, current_tag_content: list, current_ref: dict,
-               tag_parsers: dict):
+def _parse_and_place_tag(current_tag: str, current_tag_content: list, current_ref: dict, tag_parsers: dict):
     parser = tag_parsers.get(current_tag, None)
     # an exception may be right in some cases, but our tag mapping currently isn't broad enough to except
     if not parser:
         return
+
+    ##############
+    # parse the incoming tag
+    ##############
 
     parsed_content = parser.parse(current_tag_content)
     attribute_name = parser.get_attribute()
@@ -24,14 +33,14 @@ def _parse_and_place_tag(current_tag: str, current_tag_content: list, current_re
     category = parser.get_category()
 
     ##############
-    # advance
+    # advance in the ref to the desired write location, creating objects along the way as needed
     ##############
     ref_write_location = current_ref
-    attribute_path = category.get_attribute_path()
-    if len(attribute_path) > 0:
-        parent_category = attribute_path[0]
-        if len(attribute_path) > 1:
-            navigation = attribute_path[1:] + (category, )
+    category_path = category.get_category_path()
+    if len(category_path) > 0:
+        parent_category = category_path[0]
+        if len(category_path) > 1:
+            navigation = category_path[1:] + (category, )
         else:
             navigation = (category, )
 
@@ -59,6 +68,9 @@ def _parse_and_place_tag(current_tag: str, current_tag_content: list, current_re
                 raise ValueError('Categories must be either list or attribute appendable!')
             parent_category = cat
 
+    ##############
+    # perform the write
+    ##############
     if category.list_appendable():
         ref_write_location.push(parsed_content)
     elif category.attribute_appendable():
@@ -72,7 +84,7 @@ def _parse_line(line) -> tuple:
         returns tag and tag content, in order
         if the line is a continuation, tag will be None
     """
-    match = re.match(LINE_REGEX, line)
+    match = re.match(_LINE_REGEX, line)
     if match:
         groups = match.groups()
         if groups[1] == '-':
@@ -112,7 +124,7 @@ def _first_pass_parse(content: str, tag_parsers: dict) -> list:
                 current_tag = next_tag
                 current_tag_content = [next_tag_content]
             else:
-                current_tag_content.push(next_tag_content)
+                current_tag_content.append(next_tag_content)
 
     return refs
 

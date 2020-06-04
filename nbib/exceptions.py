@@ -1,4 +1,7 @@
 class UnknownTagFormat(Exception):
+    """
+        occurs when a tag's contents violate expected format
+    """
     pass
 
 
