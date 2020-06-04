@@ -11,13 +11,71 @@ ISSN_FORMAT = r'^([0-9]{4}\-[0-9]+) \(([a-zA-Z]+)\)$'
 
 class Category(Enum):
     STUDY = auto()
+    AUTHOR_LIST = auto()
     AUTHOR = auto()
     AFFILIATION = auto()
     DESCRIPTOR = auto()
-    KEYWORDS = auto()
+    KEYWORD = auto()
     PUBLICATION_TYPE = auto()
     GRANT = auto()
-    HISTORY = auto()
+
+    # corresponds to a DFS of the goal structure
+    _category_to_attribute_path = {
+        STUDY: tuple(),
+        AUTHOR_LIST: (STUDY, ),
+        AUTHOR: (STUDY, AUTHOR_LIST),
+        AFFILIATION: (STUDY, AUTHOR_LIST, AUTHOR),
+        DESCRIPTOR: (STUDY, ),
+        KEYWORD: (STUDY, ),
+        PUBLICATION_TYPE: (STUDY, ),
+        GRANT: (STUDY, )
+    }
+
+    _category_to_attribute_name = {
+        STUDY: None,
+        AUTHOR_LIST: 'authors',
+        AUTHOR: None,
+        AFFILIATION: 'affiliations',
+        DESCRIPTOR: 'descriptors',
+        KEYWORD: 'keywords',
+        PUBLICATION_TYPE: 'publication_types',
+        GRANT: 'grants',
+    }
+
+    def list_appendable(self) -> bool:
+        """
+            tag content of this category may simply be placed in a list
+        """
+        return self in [Category.GRANT, Category.PUBLICATION_TYPE, Category.KEYWORD, Category.AFFILIATION,
+                        Category.AUTHOR_LIST]
+
+    def attribute_appendable(self) -> bool:
+        """
+            tag content of this category
+        """
+        return self in [Category.STUDY, Category.AUTHOR]
+
+    def get_start_tag(self) -> str:
+        """
+            for tags that occur in sequence (i.e. list & attribute appendable), get the tag that marks the start of a
+            new entity. will throw for Enums that aren't both list & attribute appendable
+        """
+        if self == Category.AUTHOR:
+            return 'FAU'
+
+        raise ValueError('Only attribute appendable categories rooted beneath a list appendable have a start tag')
+
+    def get_attribute_path(self) -> list:
+        """
+            defines how to navigate to the location to append the next tag of the category
+        """
+        return self._category_to_attribute_path[self]
+
+    def get_attribute_name(self) -> str:
+        """
+            get the attribute name defining this category
+        """
+        return self._category_to_attribute_name[self]
 
 
 class TagParser:
@@ -113,93 +171,98 @@ class PubMedHistoryParser(TagParser):
         return dup.parse(groups[0])
 
 
-# for a full list: https://pubmed.ncbi.nlm.nih.gov/help/#pubmed-format
-tag_meta = {
-    'AB': TagParser(Category.STUDY, 'abstract'),
-    'AD': TagParser(Category.AFFILIATION, 'affiliation'),
-    'AID': IDParser(),
-    'AU': TagParser(Category.AUTHOR, 'author_abbreviated'),
-    # skipping BTI (book title) as irrelevant
-    'CI': TagParser(Category.STUDY, 'copyright'),
-    # skipping CIN (comment in) since it's information rich + somewhat ambiguous
-    'CN': TagParser(Category.STUDY, 'corporate_author'),
-    'COIS': TagParser(Category.STUDY, 'conflict_of_interest'), # note: the documentation incorrectly calls this 'COI'
-    # skipping CON (comment on)
-    # skipping CP (book chapter) as irrelevant
-    # skipping CRDT (creation date), since at best is confused with other information
-    # skipping CRF (corrected and republished form)
-    # skipping CRI (corrected and republished in)
-    # skipping CTDT (book contribution date)
-    # skipping CTI (collection title)
-    # skipping DCOM (nlm completion date) due to near duplication with phst
-    # skipping DDIN (dataset described in) no examples found
-    # skipping DRIN (dataset use reported in) no examples found
-    'DEP': DateTimeParser(Category.STUDY, 'electronic_publication_date'),
-    'DP': TagParser(Category.STUDY, 'publication_date'),  # this is an incomplete date string, leave it as a string for now
-    # skipping DRDT (book revision date) as irrelevant
-    # skipping ECF (expression of concern for) no examples found
-    # skipping ECI (expression of concern in) no examples found
-    # skipping EDAT (entrez date) duplicated exactly in phst
-    # skipping EFR (erratum for) no examples found
-    # skipping EIN (erratum in) no examples found
-    # skipping ED (book editors) as irrelevant
-    # skipping EN (book edition) as irrelevant
-    'FAU': TagParser(Category.AUTHOR, 'author'),
-    # skipping FED (editors) no examples found
-    # skipping FIR (investigator name) no examples found
-    # skipping FPS (full personal name as subject) as irrelevant
-    # skipping GN (general note) no examples found
-    'GR': TagParser(Category.GRANT, 'grant'),
-    # skippping GS (gene symbol) as irrelevant
-    'IP': TagParser(Category.STUDY, 'journal_issue'),
-    # skipping IR (investigator) no examples found
-    # skipping IRAD (investigator affiliation) no examples found
-    'IS': ISSNParser(),
-    # skipping ISBN as irrelevant
-    'JID': IntParser(Category.STUDY, 'nlm_journal_id'),
-    'JT': TagParser(Category.STUDY, 'journal'),
-    'LA': TagParser(Category.STUDY, 'language'),
-    # skipping LID (location id) as a duplicate of AID
-    'LR': DateTimeParser(Category.STUDY, 'last_revision_date'),
-    'MH': TagParser(Category.STUDY, 'mesh'), # a post-processing step will add structure to these
-    # skipping MHDA (mesh date) as duplicate of [medline] PHST
-    # skipping OAB (other abstract) as irrelevant
-    # skipping OABL (other abstract language) as irrelevant
-    # skipping OCI (other copyright information) as irrelevant
-    # skipping OID (other id) no examples
-    # skipping ORI (original report in) no examples
-    'OT': TagParser(Category.KEYWORDS, 'keyword'),
-    # skipping OTO (keyword owner) no examples
-    'OWN': TagParser(Category.STUDY, 'citation_owner'),
-    # skipping PB as irrelevant
-    'PG': TagParser(Category.STUDY, 'pages'),
-    'PHST': PubMedHistoryParser(),
-    'PL': TagParser(Category.STUDY, 'place_of_publication'),
-    # skipping PMCR (pmc released) in favor of exposing the (undocumented) PMC id (if present)
-    'PMID': IntParser(Category.STUDY, 'pubmed_id'),
-    # skipping PRIN (partial retraction in) no examples
-    # skipping PROF (partial retraction of) no examples
-    # skipping PS (personal name as subject) no examples
-    'PST': TagParser(Category.STUDY, 'publication_status'),
-    'PT': TagParser(Category.PUBLICATION_TYPE, 'publication_type')
-    # skipping RF (number of references) no examples
-    # skipping RIN (retraction in) no examples
-    # skipping RN (EC/RN number) for lack of understanding
-    # skipping ROF (retraction of) no examples
-    # skipping RPF (republished from) no examples
-    # skipping RRI (retracted and republished in) no examples
-    # skipping RRF (Retracted and Republished From) no examples
-    # skipping SB (Subset) for lack of understanding
-    # skipping SFM as no examples / irrelevant
-    'SI': TagParser(Category.STUDY, 'secondary_source'),
-    # skipping SO (source) as duplicate of a variety of the information already present
-    # skipping SPIN (summary for patients in) no examples
-    'STAT': TagParser(Category.STUDY, 'nlm_status'),
-    'TA': TagParser(Category.STUDY, 'journal_abbreviated'),
-    'TI': TagParser(Category.STUDY, 'title'),
-    'TT': TagParser(Category.STUDY, 'transliterated_title'),
-    # skipping UIN (update in) no examples
-    # skipping UOF (update of) no examples
-    'VI': TagParser(Category.STUDY, 'journal_volume'),
-    # skipping VTI (book volume title) irrelevant
-}
+def get_tag_parsers():
+    """
+    note: currently, may be stateful, which means a given set of parsers should not be used in parallel
+
+    for a full list: https://pubmed.ncbi.nlm.nih.gov/help/#pubmed-format
+    """
+    return {
+        'AB': TagParser(Category.STUDY, 'abstract'),
+        'AD': TagParser(Category.AFFILIATION, 'affiliation'),
+        'AID': IDParser(),
+        'AU': TagParser(Category.AUTHOR, 'author_abbreviated'),
+        # skipping BTI (book title) as irrelevant
+        'CI': TagParser(Category.STUDY, 'copyright'),
+        # skipping CIN (comment in) since it's information rich + somewhat ambiguous
+        'CN': TagParser(Category.STUDY, 'corporate_author'),
+        'COIS': TagParser(Category.STUDY, 'conflict_of_interest'), # note: the documentation incorrectly calls this 'COI'
+        # skipping CON (comment on)
+        # skipping CP (book chapter) as irrelevant
+        # skipping CRDT (creation date), since at best is confused with other information
+        # skipping CRF (corrected and republished form)
+        # skipping CRI (corrected and republished in)
+        # skipping CTDT (book contribution date)
+        # skipping CTI (collection title)
+        # skipping DCOM (nlm completion date) due to near duplication with phst
+        # skipping DDIN (dataset described in) no examples found
+        # skipping DRIN (dataset use reported in) no examples found
+        'DEP': DateTimeParser(Category.STUDY, 'electronic_publication_date'),
+        'DP': TagParser(Category.STUDY, 'publication_date'),  # TODO: this is an incomplete date - how to represent?
+        # skipping DRDT (book revision date) as irrelevant
+        # skipping ECF (expression of concern for) no examples found
+        # skipping ECI (expression of concern in) no examples found
+        # skipping EDAT (entrez date) duplicated exactly in phst
+        # skipping EFR (erratum for) no examples found
+        # skipping EIN (erratum in) no examples found
+        # skipping ED (book editors) as irrelevant
+        # skipping EN (book edition) as irrelevant
+        'FAU': TagParser(Category.AUTHOR, 'author'),
+        # skipping FED (editors) no examples found
+        # skipping FIR (investigator name) no examples found
+        # skipping FPS (full personal name as subject) as irrelevant
+        # skipping GN (general note) no examples found
+        'GR': TagParser(Category.GRANT, 'grant'),
+        # skippping GS (gene symbol) as irrelevant
+        'IP': TagParser(Category.STUDY, 'journal_issue'),
+        # skipping IR (investigator) no examples found
+        # skipping IRAD (investigator affiliation) no examples found
+        'IS': ISSNParser(),
+        # skipping ISBN as irrelevant
+        'JID': IntParser(Category.STUDY, 'nlm_journal_id'),
+        'JT': TagParser(Category.STUDY, 'journal'),
+        'LA': TagParser(Category.STUDY, 'language'),
+        # skipping LID (location id) as a duplicate of AID
+        'LR': DateTimeParser(Category.STUDY, 'last_revision_date'),
+        'MH': TagParser(Category.STUDY, 'mesh'), # a post-processing step will add structure to these
+        # skipping MHDA (mesh date) as duplicate of [medline] PHST
+        # skipping OAB (other abstract) as irrelevant
+        # skipping OABL (other abstract language) as irrelevant
+        # skipping OCI (other copyright information) as irrelevant
+        # skipping OID (other id) no examples
+        # skipping ORI (original report in) no examples
+        'OT': TagParser(Category.KEYWORD, 'keyword'),
+        # skipping OTO (keyword owner) no examples
+        'OWN': TagParser(Category.STUDY, 'citation_owner'),
+        # skipping PB as irrelevant
+        'PG': TagParser(Category.STUDY, 'pages'),
+        'PHST': PubMedHistoryParser(),
+        'PL': TagParser(Category.STUDY, 'place_of_publication'),
+        # skipping PMCR (pmc released) in favor of exposing the (undocumented) PMC id (if present)
+        'PMID': IntParser(Category.STUDY, 'pubmed_id'),
+        # skipping PRIN (partial retraction in) no examples
+        # skipping PROF (partial retraction of) no examples
+        # skipping PS (personal name as subject) no examples
+        'PST': TagParser(Category.STUDY, 'publication_status'),
+        'PT': TagParser(Category.PUBLICATION_TYPE, 'publication_type'),
+        # skipping RF (number of references) no examples
+        # skipping RIN (retraction in) no examples
+        # skipping RN (EC/RN number) for lack of understanding
+        # skipping ROF (retraction of) no examples
+        # skipping RPF (republished from) no examples
+        # skipping RRI (retracted and republished in) no examples
+        # skipping RRF (Retracted and Republished From) no examples
+        # skipping SB (Subset) for lack of understanding
+        # skipping SFM as no examples / irrelevant
+        'SI': TagParser(Category.STUDY, 'secondary_source'),
+        # skipping SO (source) as duplicate of a variety of the information already present
+        # skipping SPIN (summary for patients in) no examples
+        'STAT': TagParser(Category.STUDY, 'nlm_status'),
+        'TA': TagParser(Category.STUDY, 'journal_abbreviated'),
+        'TI': TagParser(Category.STUDY, 'title'),
+        'TT': TagParser(Category.STUDY, 'transliterated_title'),
+        # skipping UIN (update in) no examples
+        # skipping UOF (update of) no examples
+        'VI': TagParser(Category.STUDY, 'journal_volume'),
+        # skipping VTI (book volume title) irrelevant
+    }
