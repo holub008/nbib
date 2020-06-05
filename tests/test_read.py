@@ -29,26 +29,10 @@ AD  - Department of Radiology, Mayo Clinic, Rochester, Minnesota, USA.
 AD  - Department of Neurosurgery, Mayo Clinic, Rochester, Minnesota, USA.
 AD  - Department of Neuroradiology, Toronto Western Hospital, University of Toronto, 
       Toronto, Ontario, Canada.
-FAU - Starke, Robert M
-AU  - Starke RM
-AD  - Department of Neurological Surgery, Miami Miller School of Medicine, University of 
-      Miami Hospital, Miami, Florida, USA.
-AD  - Department of Radiology, University of Miami Hospital, Miami Miller School of 
-      Medicine, Miami, Florida, USA.
-FAU - Murad, M Hassan
-AU  - Murad MH
-AD  - Evidence-based Practice Center, Mayo Clinic, Rochester, Minnesota, USA.
-FAU - Fiorella, David
-AU  - Fiorella D
-AD  - Department of Neurosurgery, State University of New York at Stony Brook, Stony Brook 
-      University Medical Center, Stony Brook, New York, USA.
 FAU - Pereira, Vitor M
 AU  - Pereira VM
 AD  - Department of Neuroradiology, Toronto Western Hospital, University of Toronto, 
       Toronto, Ontario, Canada.
-FAU - Goyal, Mayank
-AU  - Goyal M
-AD  - Department of Diagnostic Imaging, University of Calgary, Calgary, Alberta, Canada.
 FAU - Kallmes, David F
 AU  - Kallmes DF
 AD  - Department of Radiology, Mayo Clinic, Rochester, Minnesota, USA.
@@ -66,16 +50,7 @@ JID - 101517079
 SB  - IM
 MH  - Aged
 MH  - Brain Ischemia/diagnostic imaging/*surgery
-MH  - Catheterization/instrumentation/*methods
 MH  - Clinical Trials as Topic/methods
-MH  - Female
-MH  - Humans
-MH  - Male
-MH  - Middle Aged
-MH  - Stents
-MH  - Stroke/diagnostic imaging/*surgery
-MH  - Thrombectomy/instrumentation/*methods
-MH  - Treatment Outcome
 OTO - NOTNLM
 OT  - mechanical thrombectomy
 OT  - stroke
@@ -140,12 +115,14 @@ def test_read_keywords():
     assert set(results[0]['keywords']) == {'thing1', 'thing2'}
 
 
-def test_read_descriptors():
-    results = read("MH  - Male\nMH  - Humans\n")
+def test_descriptors():
+    results = read("MH  - Male\nMH  - *Humans\nMH  - Head/*Sub\n\n")
 
     assert len(results) == 1
     assert 'descriptors' in results[0]
-    assert set(results[0]['descriptors']) == {'Male', 'Humans'}
+    assert results[0]['descriptors'] == [{'descriptor': 'Male', 'major': False},
+                                         {'descriptor': 'Humans', 'major': True},
+                                         {'descriptor': 'Head', 'qualifier': 'Sub', 'major': True}]
 
 
 def test_grants():
@@ -200,20 +177,70 @@ def test_read_full_single_ref():
         'place_of_publication': 'England',
         'journal_abbreviated': 'J Neurointerv Surg',
         'journal': 'Journal of neurointerventional surgery',
-        'nlm_journal_id': 101517079,
-        'publication_status': 'ppublish'
-        # TODO add publication history
+        'nlm_journal_id': '101517079',
+        'publication_status': 'ppublish',
+        'entrez_time': datetime(2017, 7, 30, 6),
+        'medline_time': datetime(2018, 8, 1, 6),
+        'received_time': datetime(2017, 5, 5)
     }
 
     for att, value in target_study_attributes.items():
         assert att in result
         assert result[att] == value
 
-    target_authors = []
+    target_authors = [
+        {
+            "author": "Brinjikji, Waleed",
+            "author_abbreviated": "Brinjikji W",
+            "affiliations": [
+                "Department of Radiology, Mayo Clinic, Rochester, Minnesota, USA.",
+                "Department of Neurosurgery, Mayo Clinic, Rochester, Minnesota, USA.",
+                "Department of Neuroradiology, Toronto Western Hospital, University of Toronto, Toronto, Ontario, Canada."
+            ],
+            'first_name': 'Waleed',
+            'last_name': 'Brinjikji',
+        },
+        {
+            "author": "Pereira, Vitor M",
+            "author_abbreviated": "Pereira VM",
+            "affiliations": [
+                "Department of Neuroradiology, Toronto Western Hospital, University of Toronto, Toronto, Ontario, Canada."
+            ],
+            'first_name': 'Vitor M',
+            'last_name': 'Pereira',
+        },
+        {
+            "author": "Kallmes, David F",
+            "author_abbreviated": "Kallmes DF",
+            "affiliations": [
+                "Department of Radiology, Mayo Clinic, Rochester, Minnesota, USA.",
+                "Department of Neurosurgery, Mayo Clinic, Rochester, Minnesota, USA."
+            ],
+            'first_name': 'David F',
+            'last_name': 'Kallmes'
+        }
+    ]
+
+    for auth in target_authors:
+        assert auth in result['authors']
 
     target_keywords = ['mechanical thrombectomy', 'stroke']
+    for key in target_keywords:
+        assert key in result['keywords']
 
     target_publication_types = ['Journal Article', 'Meta-Analysis', 'Systematic Review', 'Review']
+    for pt in target_publication_types:
+        assert pt in result['publication_types']
+
+    target_mesh = [
+        {'descriptor': 'Aged',  'major':  False},
+        {'descriptor': 'Brain Ischemia', 'qualifier': 'diagnostic imaging', 'major': False},
+        {'descriptor': 'Brain Ischemia', 'qualifier': 'surgery', 'major': True},
+        {'descriptor': 'Clinical Trials as Topic', 'qualifier': 'methods', 'major': False},
+
+    ]
+    for d in target_mesh:
+        assert d in result['descriptors']
 
 ##########
 # multiple refs

@@ -5,8 +5,8 @@ from nbib._structure import Category
 
 import re
 
-NESTED_BRACKET_FORMAT = r'^(.*) \[([a-zA-Z]+)\]$'
-ISSN_FORMAT = r'^([0-9]{4}\-[0-9]+) \(([a-zA-Z]+)\)$'
+NESTED_BRACKET_FORMAT = r'^(.*) \[([a-zA-Z\-]+)\]$'
+ISSN_FORMAT = r'^([0-9]{4}\-[0-9]{3}[0-9X]) \(([a-zA-Z]+)\)$'
 
 
 class TagParser:
@@ -52,7 +52,8 @@ class IDParser(TagParser):
         super().__init__(Category.STUDY, 'unspecified_id')
 
     def parse(self, lines):
-        match = re.match(NESTED_BRACKET_FORMAT, lines[0])
+        content = ''.join(line.lstrip() for line in lines)
+        match = re.match(NESTED_BRACKET_FORMAT, content)
 
         if not match:
             raise UnknownTagFormat()
@@ -98,7 +99,7 @@ class PubMedHistoryParser(TagParser):
         groups = match.groups()
         # technically, we may get name collision this way, but the format is unlikely to change
         # and any additions are unlikely to collide
-        self._attribute = groups[1]
+        self._attribute = f"{groups[1]}_time"
         return dup.parse(groups[0])
 
 
@@ -150,7 +151,7 @@ def get_tag_parsers():
         # skipping IRAD (investigator affiliation) no examples found
         'IS': ISSNParser(),
         # skipping ISBN as irrelevant
-        'JID': IntParser(Category.STUDY, 'nlm_journal_id'),
+        'JID': TagParser(Category.STUDY, 'nlm_journal_id'),  # not an integer because sometimes suffixed with 'R'
         'JT': TagParser(Category.STUDY, 'journal'),
         'LA': TagParser(Category.STUDY, 'language'),
         # skipping LID (location id) as a duplicate of AID

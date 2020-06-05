@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "eb55a38ab3fb5afb6f2f25ead4bafd9bd72371f1e83a3f52c7b25c0ff1a036dc"
+            "sha256": "e918e4b94665da9083a1cee135321598b64757ce1d7fe94407fbad72d8ad4523"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -16,9 +16,6 @@
         ]
     },
     "default": {
-        "e1839a8": {
-            "path": "."
-        },
         "nbib": {
             "path": "."
         }

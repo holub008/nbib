@@ -1,20 +1,41 @@
 import re
+from typing import Dict, List
 
-from nbib.exceptions import MalformedLine, MalformedSequentialData
+from nbib.exceptions import MalformedLine, UnknownTagFormat
 from nbib._tags import get_tag_parsers
 
 _LINE_REGEX = r'^([ A-Z]{4})(-| ) (.*)$'
 
 
-def read_file(path):
-    pass
+def read_file(path: str):
+    """
+        Read nbib formated references from a file
+
+        :param path: an nbib formatted file
+        :return: a list of parsed references. references contain a variety of attributes structured according to the _tags and _structure submodules
+
+        :raises MalformedLine: when a line does match required structure
+        :raises UnknownTagFormat: when a tag value with structured data doesn't follow expected format
+    """
+    with open(path, mode='r') as f:
+        return read(f.read())
 
 
-def read(content):
+def read(content: str) -> List[Dict]:
+    """
+        Read nbib formated references from a string
+
+        :param content: an nbib formatted string
+        :return: a list of parsed references. references contain a variety of attributes structured according to the _tags and _structure submodules
+
+        :raises MalformedLine: when a line does match required structure
+        :raises UnknownTagFormat: when a tag value with structured data doesn't follow expected format
+    """
     tag_parsers = get_tag_parsers()
-    fp_obj = _first_pass_parse(content, tag_parsers)
+    fp_refs = _first_pass_parse(content, tag_parsers)
+    sp_refs = _second_pass_parse(fp_refs)
 
-    return fp_obj
+    return sp_refs
 
 
 def _parse_and_place_tag(current_tag: str, current_tag_content: list, current_ref: dict, tag_parsers: dict):
@@ -53,6 +74,10 @@ def _parse_and_place_tag(current_tag: str, current_tag_content: list, current_re
                         ref_write_location.append({})
 
                 # to navigate the list, we simply pick the last (most recent) element
+                # if the list is empty, a tag is unexpectedly located. this can happen (e.g. affiliation being used for
+                # an entire study & for individual authors). we can either throw or drop it :/
+                if len(ref_write_location) == 0:
+                    return
                 ref_write_location = ref_write_location[-1]
             # to navigate the dict, we pick out the correct key (attribute)
             elif parent_category.attribute_appendable():
@@ -81,7 +106,7 @@ def _parse_and_place_tag(current_tag: str, current_tag_content: list, current_re
         raise ValueError('Categories must be either list or attribute appendable!')
 
 
-def _parse_line(line) -> tuple:
+def _parse_line(line: str) -> tuple:
     """
         returns tag and tag content, in order
         if the line is a continuation, tag will be None
@@ -133,7 +158,38 @@ def _first_pass_parse(content: str, tag_parsers: dict) -> list:
     return refs
 
 
-def _second_pass_parse(refs):
-    pass
-    # for mesh, we should use a follow up approach. first pass, just dump to string. second pass, structure
-    # for authors, use a follow up approach to get first + last names
+def _second_pass_parse(refs: list) -> list:
+    """
+        in second pass parsing, parsed attributes are exploded to new attributes
+        these are currently hardcodes that depend on some characteristics of the structure module
+    """
+    for ref in refs:
+        # expand MeSH heading strings into descriptor, qualifier (optional) pairs
+        if 'descriptors' in ref:
+            new_descriptors = []
+            for raw_descriptor in ref['descriptors']:
+                headings = [h for h in raw_descriptor.split('/')]
+                descriptor = headings[0]
+                if len(headings) > 1:
+                    for qualifier in headings[1:]:
+                        new_descriptors.append({
+                            'descriptor': descriptor.lstrip('*'),
+                            'qualifier': qualifier.lstrip('*'),
+                            'major': qualifier.startswith('*') or descriptor.startswith('*')
+                        })
+                else:
+                    new_descriptors.append({'descriptor': descriptor.lstrip('*'), 'major': descriptor.startswith('*')})
+            ref['descriptors'] = new_descriptors
+
+        if 'authors' in ref:
+            for auth in ref['authors']:
+                name = auth['author']
+                name_parts = [n.strip() for n in name.split(',')]
+                # it looks like PubMed almost always spits out a last, first pair.
+                # if that structure is violated, just skip it
+                if len(name_parts) == 2:
+                    # leave the rest of the name attributes in :/
+                    auth['first_name'] = name_parts[1]
+                    auth['last_name'] = name_parts[0]
+
+    return refs
