@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="nbib",
-    version="0.1.1",
+    version="0.2.1",
     author="Karl Holub",
     author_email="karljholub@gmail.com",
     description="PubMed nbib citation format parser",
