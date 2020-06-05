@@ -1,18 +1,23 @@
 # nbib
 
-A parser of the nbib citation format exported by PubMed & other NIH tools. 
+A parser of the nbib citation format exported by PubMed & other NCBI tools. 
 
 ## About
-`nbib` is opinionated in what data it parses
-and how it is structured, with the aim of supporting the most common use cases. Unlike other parsers, which produce
-"flat" data (i.e. string key-value pairs), `nbib`:
+`nbib` is opinionated in what data it parses and how it is structured, with the aim of supporting the most common use 
+cases. Unlike other parsers, which produce "flat" data (i.e. string key-value pairs), `nbib`:
 
 * Parses strings into their correct data type, as possible
 * Creates hierarchical and list objects when appropriate
 
 ## Install
 
-Latest dev version, for pip flavors:
+Install the latest production from [PyPi](https://pypi.org/project/nbib/):
+```bash
+pip install nbib
+```
+
+To install the latest dev version:
+
 ```bash
 pip install git+https://github.com/holub008/nbib.git
 ```
@@ -39,9 +44,10 @@ refs = nbib.read("""PMID- 1337\nTI  - `nbib` Rocks!\n\n""")
 `nbib` does not:
 
 * Allow users to customize parsing methods
-    * It's the author's aspiration that performing the "obvious" parsing 
+    * `nbib` opines that performing the "obvious" parsing covers 99% of use cases, so don't push this work onto the 
+    client 
 * Play nicely with improperly formatted files - exceptions are aggressively thrown for unexpected inputs
-    * Given PubMed is effectively the sole producer of these files, 
+    * Given PubMed is effectively the sole producer of these files, the risk is 
     * Please report any issues encountered! 
 * Have great run time performance
     * As of writing, a 10,000 ref file (PubMed max export size) of 829K lines took 9.2 seconds on a standard laptop.
