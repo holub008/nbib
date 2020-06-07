@@ -77,7 +77,7 @@ SO  - J Neurointerv Surg. 2018 Apr;10(4):335-339. doi: 10.1136/neurintsurg-2017-
 ############
 
 def test_pmid():
-    results = read("PMID- 12345\n")
+    results = read("PMID- 12345\n\n")
 
     assert len(results) == 1
     assert 'pubmed_id' in results[0]
@@ -85,7 +85,7 @@ def test_pmid():
 
 
 def test_ref_dates():
-    results = read('LR  - 20200604\nDEP - 20191231\n')
+    results = read('LR  - 20200604\nDEP - 20191231\n\n')
     assert len(results) == 1
     assert 'last_revision_date' in results[0]
     assert results[0]['last_revision_date'] == datetime(2020, 6, 4)
@@ -100,7 +100,7 @@ def test_ref_dates():
 
 
 def test_publication_type():
-    results = read("PT  - Journal Article\nPT  - Meta-Analysis\nPT  - Systematic Review\n")
+    results = read("PT  - Journal Article\nPT  - Meta-Analysis\nPT  - Systematic Review\n\n")
 
     assert len(results) == 1
     assert 'publication_types' in results[0]
@@ -108,7 +108,7 @@ def test_publication_type():
 
 
 def test_read_keywords():
-    results = read("OT  - thing1\nOT  - thing2\n")
+    results = read("OT  - thing1\nOT  - thing2\n\n")
 
     assert len(results) == 1
     assert 'keywords' in results[0]
@@ -126,7 +126,7 @@ def test_descriptors():
 
 
 def test_grants():
-    results = read('GR  - NIH 1234\nGR  - NLM RO1\n')
+    results = read('GR  - NIH 1234\nGR  - NLM RO1\n\n')
     assert len(results) == 1
     assert 'grants' in results[0]
     assert set(results[0]['grants']) == {'NIH 1234', 'NLM RO1'}
@@ -137,7 +137,7 @@ def test_grants():
 
 
 def test_read_authors():
-    results = read("FAU - Karl J Holub\nAU  - KJ Holub\nAD  - Nested Knowledge Inc., Minneapolis, MN\nAD  - Duluth, MN\nFAU - Other Author\n")
+    results = read("FAU - Karl J Holub\nAU  - KJ Holub\nAD  - Nested Knowledge Inc., Minneapolis, MN\nAD  - Duluth, MN\nFAU - Other Author\n\n")
 
     assert len(results) == 1
     assert 'authors' in results[0]

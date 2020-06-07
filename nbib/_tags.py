@@ -56,7 +56,7 @@ class IDParser(TagParser):
         match = re.match(NESTED_BRACKET_FORMAT, content)
 
         if not match:
-            raise UnknownTagFormat()
+            raise UnknownTagFormat(f'For line(s): "{content}"')
 
         groups = match.groups()
         # technically, we may get name collision this way, but the format is unlikely to change
@@ -77,7 +77,7 @@ class ISSNParser(TagParser):
         match = re.match(ISSN_FORMAT, lines[0])
 
         if not match:
-            raise UnknownTagFormat()
+            raise UnknownTagFormat(f'For line: "{lines[0]}"')
 
         groups = match.groups()
         # technically, we may get name collision this way, but the format is unlikely to change
@@ -94,7 +94,7 @@ class PubMedHistoryParser(TagParser):
         match = re.match(NESTED_BRACKET_FORMAT, lines[0])
 
         if not match:
-            raise UnknownTagFormat()
+            raise UnknownTagFormat(f'For line: "{lines[0]}"')
 
         groups = match.groups()
         # technically, we may get name collision this way, but the format is unlikely to change

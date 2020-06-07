@@ -1,7 +1,7 @@
 import re
 from typing import Dict, List
 
-from nbib.exceptions import MalformedLine, UnknownTagFormat
+from nbib.exceptions import MalformedLine
 from nbib._tags import get_tag_parsers
 
 _LINE_REGEX = r'^([ A-Z]{4})(-| ) (.*)$'
@@ -119,7 +119,7 @@ def _parse_line(line: str) -> tuple:
         else:
             return None, groups[2]
 
-    raise MalformedLine()
+    raise MalformedLine(f'For line: "{line}"')
 
 
 def _first_pass_parse(content: str, tag_parsers: dict) -> list:
