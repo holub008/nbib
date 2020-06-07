@@ -126,7 +126,10 @@ def _first_pass_parse(content: str, tag_parsers: dict) -> list:
     """
         in first pass parsing, every tag is mapped to a single attribute of a ref
     """
-    lines = content.split('\n')
+    # handle both LF and CRLF terminated files
+    # there is probably a better way to do this, but splitlines() is off the table since CR may be embedded in tag
+    # content (in several examples I found)
+    lines = [x.rstrip('\r') for x in content.split('\n')]
 
     refs = []
 
