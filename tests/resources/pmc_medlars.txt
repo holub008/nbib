@@ -1,0 +1,189 @@
+
+PMC - PMC6055010
+PMID- 30042925
+IS  - 2215-0161 (Electronic)
+VI  - 5
+DP  - 2018
+TI  - A method package for electrophysiological evaluation of reconstructed or
+      regenerated facial nerves in rodents.
+PG  - 283-98
+AB  - 
+OAB - Publisher: Abstract available from the publisher.
+FAU - Takeuchi, Yuichi
+AU  - Takeuchi Y
+AD  - Department of Physiology I (Neurophysiology), Tokyo Women’s Medical University,
+      Tokyo, Japan
+FAU - Osaki, Hironobu
+AU  - Osaki H
+AD  - Department of Physiology I (Neurophysiology), Tokyo Women’s Medical University,
+      Tokyo, Japan
+FAU - Matsumine, Hajime
+AU  - Matsumine H
+AD  - Department of Plastic and Reconstructive Surgery, Tokyo Women’s Medical
+      University, Tokyo, Japan
+FAU - Niimi, Yosuke
+AU  - Niimi Y
+AD  - Department of Plastic and Reconstructive Surgery, Tokyo Women’s Medical
+      University, Tokyo, Japan
+FAU - Sasaki, Ryo
+AU  - Sasaki R
+AD  - Department of Oral and Maxillofacial Surgery, Tokyo Women’s Medical University,
+      Tokyo, Japan
+FAU - Miyata, Mariko
+AU  - Miyata M
+AD  - Department of Physiology I (Neurophysiology), Tokyo Women’s Medical University,
+      Tokyo, Japan
+LA  - eng
+PT  - Journal Article
+DEP - 20180330
+PHST- 2017/10/17 [received]
+PHST- 2018/03/28 [accepted]
+TA  - MethodsX
+JT  - MethodsX
+AID - S2215-0161(18)30045-1 [pii]
+AID - 10.1016/j.mex.2018.03.007 [doi]
+SO  - MethodsX. 2018 Mar 30;5:283-98. doi:10.1016/j.mex.2018.03.007.
+
+PMC - PMC6088416
+PMID- 30123504
+IS  - 2050-2974 (Electronic)
+VI  - 6
+DP  - 2018
+TI  - Role of gender in the treatment experiences of people with an eating disorder: a 
+      metasynthesis.
+LID - 18
+AB  - Background: Traditionally perceived as a disorder of women, Eating Disorders
+      (EDs) are known to have impacts on people irrespective of their gender. This
+      study is designed to synthesise the available qualitative research studies to
+      more broadly understand the diverse experiences of ED and their treatment,
+      specifically in relationship to issues of gender. Methods: The methodology
+      involved a systematic search and quality appraisal of the literature published
+      after 1980 using terms that aimed to represent the primary concepts of “role of
+      gender” and “treatment experiences” and “eating disorders”. Nine qualitative
+      studies met the inclusion criteria. Meta-themes were inductively generated
+      through a synthesis of data across themes from the relevant included papers.
+      Results: Analysis of data was constructed around three meta-themes, each with
+      subthemes. The first meta-theme “Out of sight, out of mind” depicted the
+      experience of gender issues that were marginalised in treatment. More
+      specifically for transgender people, when gender issues were ignored by treatment
+      providers, this frequently led to non-disclosure of their gender identity.
+      Furthermore, men were less likely to be assessed for an eating disorder and
+      within this context; diagnosis of an ED and referral to specialist treatment was 
+      frequently hindered. The second meta-theme “Lack of literacy among health care
+      providers” focused on issues related to misdiagnosis of EDs, and the question of 
+      whether this was related to a lack of health literacy amongst health
+      professionals. The final theme “Pathways into treatment that address stigma and
+      other barriers” highlighted the need for the development of future treatment
+      interventions address the complex social reality of the experiencing person,
+      including questions of gender. Conclusion: Gender issues impact upon the ED
+      experience and require broader consideration in the development and evaluation of
+      ED treatment interventions, including the further development of gender-informed 
+      interventions. Trial registration: Protocol registered on PROSPERO 2017
+      CRD42017082616. Electronic supplementary material: The online version of this
+      article (10.1186/s40337-018-0207-1) contains supplementary material, which is
+      available to authorized users.
+FAU - Thapliyal, Priyanka
+AU  - Thapliyal P
+AUID- ORCID: 0000-0001-6664-9126
+AD  - 0000 0000 9939 5719grid.1029.aTranslational Health Research Institute (THRI),
+      School of Medicine, Western Sydney University, Sydney, NSW Australia
+FAU - Hay, Phillipa
+AU  - Hay P
+AD  - 0000 0000 9939 5719grid.1029.aTranslational Health Research Institute (THRI),
+      School of Medicine, Western Sydney University, Sydney, NSW Australia
+FAU - Conti, Janet
+AU  - Conti J
+AD  - 0000 0000 9939 5719grid.1029.aSchool of Social Sciences and Psychology, Western
+      Sydney University, Sydney, NSW Australia
+LA  - eng
+PT  - Journal Article
+DEP - 20180813
+PHST- 2018/03/07 [received]
+PHST- 2018/07/11 [accepted]
+TA  - J Eat Disord
+JT  - Journal of Eating Disorders
+AID - 207 [pii]
+AID - 10.1186/s40337-018-0207-1 [doi]
+SO  - J Eat Disord. 2018 Aug 13;6:. doi:10.1186/s40337-018-0207-1.
+
+PMC - PMC4211933
+PMID- 25150679
+IS  - 0033-2909 (Print)
+IS  - 1939-1455 (Electronic)
+VI  - 140
+IP  - 6
+DP  - 2014 Nov
+TI  - Phonological coding during reading.
+PG  - 1534-55
+AB  - The exact role that phonological coding (the recoding of written, orthographic
+      information into a sound based code) plays during silent reading has been
+      extensively studied for more than a century. Despite the large body of research
+      surrounding the topic, varying theories as to the time course and function of
+      this recoding still exist. The present review synthesizes this body of research, 
+      addressing the topics of time course and function in tandem. The varying theories
+      surrounding the function of phonological coding (e.g., that phonological codes
+      aid lexical access, that phonological codes aid comprehension and bolster
+      short-term memory, or that phonological codes are largely epiphenomenal in
+      skilled readers) are first outlined, and the time courses that each maps onto
+      (e.g., that phonological codes come online early (pre-lexical) or that
+      phonological codes come online late (post-lexical)) are discussed. Next the
+      research relevant to each of these proposed functions is reviewed, discussing the
+      varying methodologies that have been used to investigate phonological coding
+      (e.g., response time methods, reading while eyetracking or recording EEG and MEG,
+      concurrent articulation) and highlighting the advantages and limitations of each 
+      with respect to the study of phonological coding. In response to the view that
+      phonological coding is largely epiphenomenal in skilled readers, research on the 
+      use of phonological codes in prelingually, profoundly deaf readers is reviewed.
+      Finally, implications for current models of word identification
+      (activation-verification model (Van Order, 1987), dual-route model (e.g.,
+      Coltheart, Rastle, Perry, Langdon, & Ziegler, 2001), parallel distributed
+      processing model (Seidenberg & McClelland, 1989)) are discussed.
+FAU - Leinenger, Mallorie
+AU  - Leinenger M
+AD  - University of California, San Diego
+LA  - eng
+PT  - Journal Article
+DEP - 20140825
+TA  - Psychol Bull
+JT  - Psychological bulletin
+AID - 10.1037/a0037830 [doi]
+MID - NIHMS623520
+SO  - Psychol Bull. 2014 Nov;140(6):1534-55. Epub 2014 Aug 25 doi:10.1037/a0037830.
+
+PMC - PMC3446808
+PMID- 23049521
+IS  - 1664-1078 (Electronic)
+VI  - 3
+DP  - 2012
+TI  - Becoming the Denigrated Other: Group Relations Perspectives on Initial Reactions 
+      to a Bipolar Disorder Diagnosis.
+LID - 347
+AB  - The initial reactions to a bipolar disorder diagnosis of research participants in
+      a small, qualitative study consisted of astonishment, dread of being “mad,” and
+      extremely negative associations. All had prior mental health diagnoses, including
+      episodes of severe depression (all but one) and alcoholism (one). All
+      participants reported mental health histories prediagnosis and most had spent
+      years contending with mental health labels, medications, symptoms, and
+      hospitalizations. In addition, most participants were highly educated health
+      professionals, quite familiar with the behaviors that the medical system
+      considered to comprise bipolar disorder. Their negative associations to the
+      initial bipolar disorder diagnosis, therefore, appeared inconsistent with their
+      mental health histories and professional knowledge. This article contextualizes
+      these initial reactions of shock and distress and proposes interpretations of
+      these findings from societal and psychodynamic group relations perspectives. The 
+      participants’ initial negative reactions are conceptualized as involving the
+      terror of being transported from the group of “normal” people into the group of
+      “mad” or “crazy” people, i.e., people with mental illnesses, who may constitute a
+      societal “denigrated other.”
+FAU - Goldberg, Susan G.
+AU  - Goldberg SG
+AD  - Department of Psychology, Duquesne University, PittsburghPA, USA
+LA  - eng
+PT  - Journal Article
+DEP - 20120919
+PHST- 2012/07/01 [received]
+PHST- 2012/08/29 [accepted]
+TA  - Front Psychol
+JT  - Frontiers in Psychology
+AID - 10.3389/fpsyg.2012.00347 [doi]
+SO  - Front Psychol. 2012 Sep 19;3:. doi:10.3389/fpsyg.2012.00347.

@@ -7,6 +7,7 @@ import re
 
 NESTED_BRACKET_FORMAT = r'^(.*) \[([a-zA-Z\-]+)\]$'
 ISSN_FORMAT = r'^([0-9]{4}\-[0-9]{3}[0-9X]) \(([a-zA-Z]+)\)$'
+PMC_FORMAT = r'^PMC([0-9]+)$'
 
 
 class TagParser:
@@ -26,9 +27,7 @@ class TagParser:
         :param lines: the agglomerated set of lines corresponding to the tag being parsed
         :return:
         """
-        # it appears that any space needed will already be present on the preceding line
-        # note: it may be a bit faster to strip either 1 or 5 characters (leading spaces) by index instead of stripping
-        return ''.join(line.lstrip() for line in lines)
+        return ' '.join(line.strip() for line in lines)
 
 
 class IntParser(TagParser):
@@ -84,6 +83,17 @@ class ISSNParser(TagParser):
         # and any additions are unlikely to collide
         self._attribute_prefix = groups[1].lower()
         return groups[0]
+
+
+class PMCIDParser(TagParser):
+    def parse(self, lines):
+        match = re.match(PMC_FORMAT, lines[0])
+
+        if not match:
+            raise UnknownTagFormat(f'For line: "{lines[0]}"')
+
+        groups = match.groups()
+        return int(groups[0])
 
 
 class PubMedHistoryParser(TagParser):
@@ -170,7 +180,8 @@ def get_tag_parsers():
         'PG': TagParser(Category.STUDY, 'pages'),
         'PHST': PubMedHistoryParser(),
         'PL': TagParser(Category.STUDY, 'place_of_publication'),
-        # skipping PMCR (pmc released) in favor of exposing the (undocumented) PMC id (if present)
+        'PMC': PMCIDParser(Category.STUDY, 'pmcid'),
+        # skipping PMCR (pmc released) in favor of exposing the PMC id (if present)
         'PMID': IntParser(Category.STUDY, 'pubmed_id'),
         # skipping PRIN (partial retraction in) no examples
         # skipping PROF (partial retraction of) no examples
