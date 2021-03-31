@@ -1,4 +1,5 @@
 import dateutil.parser as dup
+import datetime
 
 from nbib.exceptions import UnknownTagFormat
 from nbib._structure import Category
@@ -40,6 +41,14 @@ class DateTimeParser(TagParser):
     this class parses well-formatted, complete dates
     """
     def parse(self, lines: list):
+        # the  medlars (AKA MEDLINE format) format from PMC uses a yyyymmdd or yyyymm format
+        # dateutil doesn't like yyyymm, so we catch it early
+        if lines[0].isnumeric():
+            if len(lines[0]) == 8:
+                return datetime.datetime(int(lines[0][0:4]), int(lines[0][4:6]), int(lines[0][6:8]))
+            elif len(lines[0]) == 6:
+                # the choice of 1 is cruddy :/ i need to find a decent "incomplete date" library
+                return datetime.datetime(int(lines[0][0:4]), int(lines[0][4:6]), 1)
         return dup.parse(lines[0])
 
 

@@ -195,6 +195,7 @@ IS  - 1326-5377 (Electronic)
 VI  - 192
 IP  - 6
 DP  - 2010 Mar 15
+DEP - 201003
 TI  - Invited Editorial presents an accurate summary of the results of two randomised
       placebo-controlled trials of vertebroplasty.
 PG  - 338-41

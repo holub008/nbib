@@ -1,3 +1,5 @@
+import datetime
+
 from nbib import read, read_file
 
 from tests.test_read import single_ref
@@ -68,3 +70,5 @@ def test_read_medlars():
     assert res1['abstract'] == expected_abstract
 
     assert results[4]['publication_date'] == '2010 Mar 15'
+    assert results[4]['electronic_publication_date'].year == 2010
+    assert results[4]['electronic_publication_date'].month == 3
