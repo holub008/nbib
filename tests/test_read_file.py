@@ -18,7 +18,7 @@ def test_read_many():
 
 def test_read_medlars():
     results = read_file('tests/resources/pmc_medlars.txt')
-    assert len(results) == 4
+    assert len(results) == 5
     res0 = results[0]
     assert res0['pmcid'] == 6055010
     assert res0['pubmed_id'] == 30042925
@@ -66,3 +66,5 @@ def test_read_medlars():
     assert res1['pmcid'] == 6088416
     assert res1['pubmed_id'] == 30123504
     assert res1['abstract'] == expected_abstract
+
+    assert results[4]['publication_date'] == '2010 Mar 15'

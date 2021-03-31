@@ -187,3 +187,44 @@ TA  - Front Psychol
 JT  - Frontiers in Psychology
 AID - 10.3389/fpsyg.2012.00347 [doi]
 SO  - Front Psychol. 2012 Sep 19;3:. doi:10.3389/fpsyg.2012.00347.
+
+PMC - PMC3935517
+PMID- 20230352
+IS  - 0025-729X (Print)
+IS  - 1326-5377 (Electronic)
+VI  - 192
+IP  - 6
+DP  - 2010 Mar 15
+TI  - Invited Editorial presents an accurate summary of the results of two randomised
+      placebo-controlled trials of vertebroplasty.
+PG  - 338-41
+AB  - Our recent editorial in the Journal presents an accurate summary of our two
+      randomised trials of vertebroplasty, which found no benefit of vertebroplasty
+      over placebo. Participants in both trials are representative of patients seen in
+      clinical practice and who would qualify for government-subsidised funding of
+      vertebroplasty in Australia. Clinical experience and previous published
+      literature are likely to have overestimated the treatment benefit of
+      vertebroplasty for many reasons. This is why randomised placebo-controlled trials
+      are required to determine the efficacy of treatment interventions, particularly
+      when the condition being treated is self-limiting and the primary end point is
+      improvement of symptoms. Based on the best evidence currently available, the
+      routine use of vertebroplasty outside of the research setting for painful
+      osteoporotic vertebral fractures appears unjustified.
+FAU - Buchbinder, Rachelle
+AU  - Buchbinder R
+AD  - Monash Department of Clinical Epidemiology, Cabrini Hospital, Melbourne, VIC
+FAU - Osborne, Richard H
+AU  - Osborne RH
+AD  - Public Health Innovation, Faculty of Health, Medicine, Nursing and Behavioural
+      Sciences, Deakin University, Melbourne, VIC
+FAU - Kallmes, David
+AU  - Kallmes D
+AD  - Mayo Clinic, Rochester, Minn, USA
+LA  - eng
+PT  - Journal Article
+PT  - Comment
+GR  - R01 AR049373 || AR
+TA  - Med J Aust
+JT  - The Medical journal of Australia
+MID - NIHMS552929
+SO  - Med J Aust. 2010 Mar 15;192(6):338-41.
